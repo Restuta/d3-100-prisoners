@@ -94,10 +94,10 @@ function dragged(d) {
 }
 
 function dragended(d) {
-  //d.fx = 0
-  //d.fy = 0
+  d.fx = d3.event.x
+  d.fy = d3.event.y
   if (!d3.event.active) simulation.alphaTarget(0);
-  simulation.unfix(d);
+  //simulation.unfix(d);
 }
 
 </script>
