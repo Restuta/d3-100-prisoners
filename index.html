@@ -15,6 +15,9 @@
   <div id="graph"></div>
   <script>
 
+  const defaultZoom = 0.3
+  const numbersInArr = 100
+
   let width = window.innerWidth// + 1000
   let height = window.innerHeight// - 100
 
@@ -26,7 +29,7 @@
     // .translate([500, 450])
     // .extent(0.5)
     // .translateExtent([[-100, -100], [width + 90, height + 100]])
-    .scaleExtent([0.1, 40])
+    .scaleExtent([0.01, 40])
     .on('zoom', zoomed)
 
 
@@ -36,6 +39,7 @@
     .append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.right + ')')
     .call(zoom)
+
   svg.append("svg:defs").selectAll("marker")
     .data(["end"])      // Different link/path types can be defined here
     .enter().append("svg:marker")    // This section adds in the arrows
@@ -55,6 +59,8 @@
     .attr('height', height)
     .style('fill', 'none')
     .style('pointer-events', 'all')
+
+  zoom.scaleTo(rect, defaultZoom)
 
 
   // var container = svg.append('g')
@@ -76,13 +82,14 @@
   // }
 
   var simulation = d3.forceSimulation()
-      .alpha(5)
+      .alpha(3)
       .force("link", d3.forceLink().id(function(d) { return d.id; }))
       //.force("charge", d3.forceManyBody().strength(-200))
   		.force('charge', d3.forceManyBody()
-        .strength(-10)
+        .strength(-220)
         .theta(0.8)
-        // .distanceMax(50)
+        // .distanceMin(200)
+        .distanceMax(300)
       )
   		// .force('collide', d3.forceCollide()
       //   .radius(d => 10)
@@ -90,9 +97,14 @@
       // )
       .force("center", d3.forceCenter(width / 2, height / 2));
 
+  simulation.alphaTarget(0.5).restart()
 
-  const circles = getCirclesInRandomArray(100)
-  circles.forEach(x => console.log(x))
+
+  const circles = getCirclesInRandomArray(numbersInArr)
+  circles.forEach(x => {
+    console.log(x.length)
+    console.log(x)
+  })
   console.log('---')
 
   // const nodes = circle.reduce((a, b) => {
@@ -198,24 +210,40 @@
   }
 
   function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart()
-    d.fx = d.x
-    d.fy = d.y
-  //  simulation.fix(d);
+    simulation.alphaTarget(0.3).restart()
+    // d3.select(this).classed('fixed', d.fixed = true)
+    d3.event.sourceEvent.stopPropagation()
+    d3.select(this).classed('dragging', true)
   }
 
   function dragged(d) {
-    d.fx = d3.event.x
-    d.fy = d3.event.y
-  //  simulation.fix(d, d3.event.x, d3.event.y);
+    d3.select(this).attr('cx', d.fx = d3.event.x).attr('cy', d.fy = d3.event.y)
   }
 
   function dragended(d) {
-    d.fx = d3.event.x
-    d.fy = d3.event.y
-    if (!d3.event.active) simulation.alphaTarget(0.3);
-    //simulation.unfix(d);
+    if (!d3.event.active) simulation.alphaTarget(0);
+    d3.select(this).classed('dragging', false)
   }
+
+  // function dragstarted(d) {
+  //   if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+  //   d.fx = d.x
+  //   d.fy = d.y
+  // //  simulation.fix(d);
+  // }
+  //
+  // function dragged(d) {
+  //   d.fx = d3.event.x
+  //   d.fy = d3.event.y
+  // //  simulation.fix(d, d3.event.x, d3.event.y);
+  // }
+  //
+  // function dragended(d) {
+  //   d.fx = d3.event.x
+  //   d.fy = d3.event.y
+  //   if (!d3.event.active) simulation.alphaTarget(0.3);
+  //   //simulation.unfix(d);
+  // }
 
   run(graph)
 
