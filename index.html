@@ -27,7 +27,31 @@ var simulation = d3.forceSimulation()
     .force("center", d3.forceCenter(width / 2, height / 2));
 
 
-d3.json("data.json", function(error, graph) {
+const graph = {
+  "nodes": [
+    {"id": "1", "group": 1},
+    {"id": "2", "group": 2},
+    {"id": "4", "group": 3},
+    {"id": "8", "group": 4},
+    {"id": "16", "group": 5},
+    {"id": "11", "group": 1},
+    {"id": "12", "group": 2},
+    {"id": "14", "group": 3},
+    {"id": "18", "group": 4},
+    {"id": "116", "group": 5}
+  ],
+  "links": [
+    {"source": "1", "target": "2", "value": 1},
+    {"source": "2", "target": "4", "value": 1},
+    {"source": "4", "target": "8", "value": 1},
+    {"source": "4", "target": "8", "value": 1},
+    {"source": "8", "target": "16", "value": 1},
+    {"source": "16", "target": "1", "value": 1}
+  ]
+}
+  
+  
+function run(error, graph) {
   if (error) throw error;
   
   graph.links.forEach(function(d){
@@ -86,8 +110,9 @@ d3.json("data.json", function(error, graph) {
     		.attr("x", function(d) { return d.x; })
             .attr("y", function (d) { return d.y; })
             .style("font-size", "10px").style("fill", "#333");
-  }
-});
+}
+
+run({}, graph)
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart()
