@@ -51,8 +51,7 @@ const graph = {
 }
   
   
-function run(error, graph) {
-  if (error) throw error;
+function run(graph) {
   
   graph.links.forEach(function(d){
 //     d.source = d.source_id;    
@@ -110,9 +109,8 @@ function run(error, graph) {
     		.attr("x", function(d) { return d.x; })
             .attr("y", function (d) { return d.y; })
             .style("font-size", "10px").style("fill", "#333");
+  }
 }
-
-run({}, graph)
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart()
@@ -133,5 +131,7 @@ function dragended(d) {
   if (!d3.event.active) simulation.alphaTarget(0);
   //simulation.unfix(d);
 }
+  
+run(graph)
 
 </script>
